@@ -1,0 +1,1499 @@
+# Golden set for Claude PR code review eval. 80 PRs, 105 findings.
+# Guide: data/golden-set-guide.md | Spot-check rationale: data/spot-check-findings.md
+- prNumber: 61036
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: >-
+    ACQSHARE-4104 [FE] Keyboard navigation broken in Share modal — tooltip with interactive content in GuestsButton
+    hijacks tab order
+  mergedAt: '2026-04-16T14:58:36Z'
+  split: dev
+  category: security
+  totalAdditions: 1
+  totalDeletions: 0
+  findings:
+    - file: >-
+        application/web/lazy-modules/share-and-invite/modals/share/components/share-content/components/tabs/components/invite/manage-team-access/components/team-management-access-text/invite-free-guests-text/GuestsButton.tsx
+      line: 46
+      issue: >-
+        target='_blank' link missing rel='noopener noreferrer', exposing the page to reverse-tabnabbing and
+        window.opener leakage
+      severity: SHOULD_FIX
+      commentId: 3093674775
+    - file: >-
+        application/web/lazy-modules/share-and-invite/modals/share/components/share-content/components/tabs/components/invite/manage-team-access/components/team-management-access-text/invite-free-guests-text/GuestsButton.tsx
+      line: 47
+      issue: >-
+        tabIndex={-1} makes the 'Learn more' link unreachable for keyboard-only users, violating accessibility
+        requirements
+      severity: SHOULD_FIX
+      commentId: 3093674719
+- prNumber: 54149
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: AUTHN-8012 Add search query parameter to team discovery APIs
+  mergedAt: '2026-04-13T12:40:09Z'
+  split: holdout
+  category: security
+  totalAdditions: 351
+  totalDeletions: 16
+  findings:
+    - file: server/apis/API/src/main/java/projects/pt/server/api/servlets/team/discovery/TeamDiscoveryTeamsApi.java
+      line: 149
+      issue: Raw search string interpolated directly into URL without encoding, allowing URL injection via special characters
+      severity: BLOCKING
+      commentId: 3062999543
+- prNumber: 53990
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: AUTHZ-4083 add a fallback to buildStubWithPassport
+  mergedAt: '2026-04-08T13:37:33Z'
+  split: dev
+  category: security
+  totalAdditions: 212
+  totalDeletions: 142
+  findings:
+    - file: >-
+        server/general/users-impl/src/main/java/projects/pt/server/users/services/organization/miroai/grpc/GrpcAiSettingsApiClient.java
+      line: 613
+      issue: System passport used for a user-initiated flow, which is incorrect; regular passport should be used instead
+      severity: BLOCKING
+      commentId: 3043720770
+    - file: ''
+      line: null
+      issue: Fallback behavior should be restricted to development environments only, not exposed in production
+      severity: SHOULD_FIX
+      commentId: 4066578774
+    - file: >-
+        server/general/users-impl/src/main/java/projects/pt/server/users/services/organization/miroai/grpc/GrpcAiSettingsApiClient.java
+      line: 600
+      issue: >-
+        Fallback behavior that should be restricted to development environments is potentially active in all
+        environments, changing expected failure behavior in production.
+      severity: SHOULD_FIX
+      commentId: 3043620348
+    - file: >-
+        server/general/users-impl/src/main/java/projects/pt/server/users/services/organization/miroai/grpc/GrpcAiSettingsApiClient.java
+      line: 604
+      issue: >-
+        The else branch should only execute in development environments but lacks environment gating, risking unintended
+        behavior in production.
+      severity: SHOULD_FIX
+      commentId: 3043710150
+- prNumber: 54011
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CBE-1930 Introduce Metrics for DemoLayoutModel.
+  mergedAt: '2026-04-05T20:26:10Z'
+  split: dev
+  category: security
+  totalAdditions: 189
+  totalDeletions: 0
+  findings:
+    - file: server/canva/CommonsCanvas/src/main/java/projects/pt/server/commonscanvas/models/demolayout/DemoLayoutModel.java
+      line: 50
+      issue: >-
+        Only checking 'ns:layoutNode' but not plain 'layoutNode' — client could inject unnamespaced version bypassing
+        the check
+      severity: SHOULD_FIX
+      commentId: 3032766122
+    - file: server/canva/CommonsCanvas/src/main/java/projects/pt/server/commonscanvas/models/demolayout/DemoLayoutModel.java
+      line: 63
+      issue: >-
+        Only checking one namespace variant for layoutNode in serverJson — 'ns:layoutNode' variant may slip through
+        without dual validation
+      severity: SHOULD_FIX
+      commentId: 3032769344
+- prNumber: 53926
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'CM-7436: implement updateProject gRPC RPC for title updates'
+  mergedAt: '2026-04-01T14:09:37Z'
+  split: dev
+  category: security
+  totalAdditions: 214
+  totalDeletions: 0
+  findings:
+    - file: ''
+      line: null
+      issue: Personal data may be included in audit events, requiring review with data engineering team for compliance
+      severity: SHOULD_FIX
+      commentId: 4044328197
+    - file: >-
+        server/business-logic-core/business-logic-core-impl/src/main/kotlin/com/miro/bl/core/impl/services/project/DefaultProjectsService.kt
+      line: 169
+      issue: >-
+        Personal/customer data being sent to analytics system violates data engineering team's policy and requires
+        periodic cleanup jobs
+      severity: SHOULD_FIX
+      commentId: 3022207763
+- prNumber: 60049
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: CM-0000 - Add withActions param support to CIES content item queries
+  mergedAt: '2026-03-31T11:23:31Z'
+  split: holdout
+  category: security
+  totalAdditions: 64
+  totalDeletions: 30
+  findings:
+    - file: .claude/skills/client-projectId-API-migration
+      line: 1
+      issue: Internal Claude skill/configuration file accidentally committed to the repository
+      severity: SHOULD_FIX
+      commentId: 3014999192
+- prNumber: 59761
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'ACX-3996: escape dangerous symbols in person name'
+  mergedAt: '2026-03-24T16:12:04Z'
+  split: dev
+  category: security
+  totalAdditions: 25
+  totalDeletions: 2
+  findings:
+    - file: packages/async-insights/src/panels/single-cluster/summary-processing.ts
+      line: 58
+      issue: >-
+        Using dangerouslySetInnerHTML with rendered HTML string instead of normal JSX, introducing unnecessary XSS risk
+        and complexity
+      severity: SHOULD_FIX
+      commentId: 2982229800
+    - file: packages/async-insights/src/panels/single-cluster/summary-processing.ts
+      line: 58
+      issue: >-
+        Text is passed to a markdown processor, which may cause unintended rendering or injection if not properly
+        sanitized
+      severity: SHOULD_FIX
+      commentId: 2982383805
+- prNumber: 59422
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'AFX-2946: Gate AI Models tab on FLOWS entitlement'
+  mergedAt: '2026-03-20T12:51:25Z'
+  split: dev
+  category: security
+  totalAdditions: 12
+  totalDeletions: 3
+  findings:
+    - file: packages/settings-app/src/features/ai-settings/pages/page-ai-capabilities/hooks/useAICapabilitiesTabs.ts
+      line: 33
+      issue: Permission/access check is not properly implemented, with a known issue deferred to a follow-up ticket
+      severity: SHOULD_FIX
+      commentId: 2965510450
+- prNumber: 58805
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: SE-XXXX Fix omnibar 401 on private workspaces
+  mergedAt: '2026-03-10T19:14:29Z'
+  split: dev
+  category: security
+  totalAdditions: 9
+  totalDeletions: 3
+  findings:
+    - file: packages/omnibar/src/hooks/useContentRetrieval.ts
+      line: 460
+      issue: >-
+        Parameter should be passed as a proper param rather than directly interpolated into the URL, risking injection
+        or encoding issues
+      severity: SHOULD_FIX
+      commentId: 2911404611
+- prNumber: 21355
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: COMMS-1645 - Migrate the AddFollowTip
+  mergedAt: '2024-04-23T12:41:08Z'
+  split: dev
+  category: security
+  totalAdditions: 62
+  totalDeletions: 5
+  findings:
+    - file: packages/board-settings-menu/src/BoardSettings.tsx
+      line: 36
+      issue: dangerouslySetInnerHTML used without sanitizing HTML, creating potential XSS vulnerability
+      severity: BLOCKING
+      commentId: 1575951719
+    - file: packages/board-settings-menu/src/BoardSettings.tsx
+      line: 31
+      issue: >-
+        UiTip not following the established general pattern used elsewhere in the component, leading to inconsistent and
+        harder-to-maintain code
+      severity: SHOULD_FIX
+      commentId: 1576089271
+- prNumber: 61210
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'AWF-6052 Fix: Blocked by field is empty in export to csv of timeline'
+  mergedAt: '2026-04-21T17:11:31Z'
+  split: dev
+  category: logic
+  totalAdditions: 159
+  totalDeletions: 3
+  findings:
+    - file: ''
+      line: null
+      issue: >-
+        Fix is applied at the wrong level; cache-setting logic should be consistent across views, matching how table
+        view handles it
+      severity: SHOULD_FIX
+      commentId: 4146135291
+- prNumber: 61050
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'AWF-6327 - POC: Timeline bars extended with card data'
+  mergedAt: '2026-04-21T15:37:59Z'
+  split: dev
+  category: logic
+  totalAdditions: 363
+  totalDeletions: 85
+  findings:
+    - file: ''
+      line: null
+      issue: Icons and text truncation behave incorrectly in the UI, causing visual rendering issues
+      severity: SHOULD_FIX
+      commentId: 4140980118
+- prNumber: 54463
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'CBE-1995: GotoLinkModel. Forbid fields without ns:'
+  mergedAt: '2026-04-21T13:04:14Z'
+  split: dev
+  category: logic
+  totalAdditions: 65
+  totalDeletions: 3
+  findings:
+    - file: server/canva/CommonsCanvas/src/main/java/projects/pt/server/commonscanvas/models/gotolink/GotoLinkModel.java
+      line: 74
+      issue: Metric removed prematurely; should not be removed until STRICT validation task
+      severity: SHOULD_FIX
+      commentId: 3111928804
+- prNumber: 54501
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: USRM-0000 Add teams and userGroups params to createUsersInTestOrganization
+  mergedAt: '2026-04-21T12:17:49Z'
+  split: dev
+  category: logic
+  totalAdditions: 41
+  totalDeletions: 1
+  findings:
+    - file: server/apis/API/src/main/java/projects/pt/server/api/commands/organization/test/OrganizationTestCommands.java
+      line: 539
+      issue: Potential NullPointerException if admin is null at line 539
+      severity: BLOCKING
+      commentId: 3117114198
+- prNumber: 54488
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: BEX-000 - fix duplicated properties beans
+  mergedAt: '2026-04-21T10:31:34Z'
+  split: holdout
+  category: logic
+  totalAdditions: 56
+  totalDeletions: 43
+  findings:
+    - file: >-
+        devplatform/appx/marketplace/src/main/java/com/miro/devplatform/appx/marketplace/spring/configuration/Oauth2ServerClientProperties.java
+      line: 10
+      issue: Double bean registration via component scan and @EnableConfigurationProperties with different bean names
+      severity: SHOULD_FIX
+      commentId: 3116217142
+    - file: >-
+        server/general/referrals/src/main/java/projects/pt/server/referrals/integrations/cello/config/CelloProperties.java
+      line: 8
+      issue: Double bean registration via component scan and @EnableConfigurationProperties with different bean names
+      severity: SHOULD_FIX
+      commentId: 3116221244
+- prNumber: 61063
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'PROTO-2208: D3 -- Misc painters (hr, details, video)'
+  mergedAt: '2026-04-21T09:03:51Z'
+  split: dev
+  category: logic
+  totalAdditions: 495
+  totalDeletions: 1
+  findings:
+    - file: packages/widget-html/src/scene-builder/painters/hr.ts
+      line: 24
+      issue: >-
+        HR color logic ignores border.top.style='none', potentially rendering a visible border when it should be
+        invisible
+      severity: SHOULD_FIX
+      commentId: 3110934802
+- prNumber: 54455
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: AUTHZ-4174 - Project objects hierarchy check support
+  mergedAt: '2026-04-21T09:01:58Z'
+  split: dev
+  category: logic
+  totalAdditions: 384
+  totalDeletions: 14
+  findings:
+    - file: >-
+        server/authorization/authz-pubsub-producer-impl/src/test/kotlin/com/miro/authz/batch/DefaultAuthzBatchPreprocessorTest.kt
+      line: 60
+      issue: >-
+        Test stub casts invocation argument to wrong generic type causing ClassCastException at runtime when
+        filterBatchRecords is called with an AuthzProject record
+      severity: BLOCKING
+      commentId: 3115772389
+    - file: >-
+        server/authorization/authz-monolith-integration-test/src/test/kotlin/com/miro/authz/monolith/data/backfill/MainDB.kt
+      line: 183
+      issue: Double insertion of team/account row when projectId != null causes potential duplicate key errors
+      severity: SHOULD_FIX
+      commentId: 3115772421
+- prNumber: 61109
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: AUTHN-8121 - Remove AUTHN-7977-org-scoped-can-create-first-team experiment
+  mergedAt: '2026-04-21T08:00:52Z'
+  split: holdout
+  category: logic
+  totalAdditions: 47
+  totalDeletions: 184
+  findings:
+    - file: application/web/general/services/user/UserServiceImpl.ts
+      line: 366
+      issue: >-
+        Network-only eligibility check with no error handling means a transient failure leaves isTeamInfoLoaded unset,
+        permanently hiding go-to-your-team and create-your-free-team actions for external collaborators
+      severity: SHOULD_FIX
+      commentId: 3100349982
+    - file: application/web/general/services/user/UserServiceImpl.ts
+      line: 366
+      issue: >-
+        hasFreeTeamAvailable() rejects on request failure in web path, causing JoinTheTeamToCreateBoardDialog to throw
+        in catch before setting isTeamInfoLoaded, differing from safe false-fallback semantics
+      severity: SHOULD_FIX
+      commentId: 3100488870
+    - file: application/web/lazy-modules/welcome/utils/openJoinTeamDialog.ts
+      line: 57
+      issue: >-
+        No error handling around the new network call; a transient 5xx or network failure will prevent the join-team
+        dialog from ever opening, whereas previously it relied on already-loaded local data
+      severity: SHOULD_FIX
+      commentId: 3100349963
+    - file: application/web/lazy-modules/welcome/utils/openJoinTeamDialog.ts
+      line: 57
+      issue: >-
+        Web path awaits canCreateFirstTeam() directly without try/catch, so a rejected request prevents the dialog from
+        opening instead of degrading gracefully to false
+      severity: SHOULD_FIX
+      commentId: 3100488864
+- prNumber: 54394
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: OLAF-3241 Remove hardcoded license from TeamMembershipRole
+  mergedAt: '2026-04-21T05:58:36Z'
+  split: dev
+  category: logic
+  totalAdditions: 23
+  totalDeletions: 36
+  findings:
+    - file: ''
+      line: null
+      issue: >-
+        Unverified assumption that it is safe to continue when no org connection and that getProvisionMemberLicense
+        equals role.getOrganizationUserLicense
+      severity: SHOULD_FIX
+      commentId: 4127673609
+    - file: >-
+        server/apis/API/src/main/java/projects/pt/server/api/services/admin/attachavailability/checkers/AttachAccountToOrganizationUserDomainsCheckService.java
+      line: 56
+      issue: >-
+        Whitelist check uses a synthetic resource with guessed license when no org connection exists, potentially
+        leading to incorrect access decisions
+      severity: SHOULD_FIX
+      commentId: 3099143198
+    - file: >-
+        server/apis/API/src/main/java/projects/pt/server/api/services/admin/attachavailability/checkers/AttachAccountToOrganizationUserDomainsCheckService.java
+      line: 56
+      issue: Code change may need to be reflected in authorization logic as well
+      severity: SHOULD_FIX
+      commentId: 3099262012
+    - file: server/general/users-contracts/src/main/kotlin/com/miro/authz/roles/team/TeamMembershipRole.kt
+      line: 54
+      issue: Role mapping change lacks tests to verify correctness, leaving uncertainty about whether it is a breaking change
+      severity: SHOULD_FIX
+      commentId: 3099253887
+    - file: >-
+        server/general/users-impl/src/main/java/projects/pt/server/users/services/organization/teams/users/DefaultOrganizationTeamUsersService.java
+      line: 175
+      issue: >-
+        Uncertain whether getProvisionMemberLicense always returns the same license as
+        role.getOrganizationUserLicense(), potentially causing incorrect license assignment
+      severity: SHOULD_FIX
+      commentId: 3099264866
+- prNumber: 54333
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: DIAG-4446 - Add code field to DiagramData gRPC mapper
+  mergedAt: '2026-04-20T19:01:35Z'
+  split: dev
+  category: logic
+  totalAdditions: 173
+  totalDeletions: 35
+  findings:
+    - file: >-
+        canvas-system/board-engine/board-grpc-api/src/main/kotlin/com/miro/canvas/board/grpc/api/platform/mappers/widgets/diagram/DiagramData.kt
+      line: 1
+      issue: >-
+        Missing related changes in DiagramWidgetController and CreateDiagramRequest proto model needed to complete the
+        title property addition
+      severity: SHOULD_FIX
+      commentId: 3100464039
+- prNumber: 61071
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'A11Y-3952: Implement microphone permission denied/not granted error message'
+  mergedAt: '2026-04-20T16:41:54Z'
+  split: dev
+  category: logic
+  totalAdditions: 377
+  totalDeletions: 8
+  findings:
+    - file: ''
+      line: null
+      issue: Same error message shown for microphone permission denied vs not yet granted, leading to misleading UX
+      severity: SHOULD_FIX
+      commentId: 4129243925
+- prNumber: 54306
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'CC-4374: Add miroAi metadata to DataTableContentUpdateCommittedEvent'
+  mergedAt: '2026-04-20T12:43:44Z'
+  split: dev
+  category: logic
+  totalAdditions: 239
+  totalDeletions: 6
+  findings:
+    - file: >-
+        server/data-tables/data-tables-impl/src/main/kotlin/com/miro/datatables/service/metadata/DataTableMetadataUpdateAccumulator.kt
+      line: 76
+      issue: >-
+        Potential missing cleanup: table entry may not be removed when table is not found, possibly leading to stale
+        data
+      severity: SHOULD_FIX
+      commentId: 3094003120
+    - file: >-
+        server/data-tables/data-tables-impl/src/main/kotlin/com/miro/datatables/service/metadata/DataTableMetadataUpdateAccumulator.kt
+      line: 76
+      issue: When table.isEmpty() is true, table entry is not removed from pendingUpdates, causing a slow memory leak
+      severity: SHOULD_FIX
+      commentId: 3100871351
+- prNumber: 60424
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'XD-3777: Add ''Always open in Desktop app'' toggle to board settings menu'
+  mergedAt: '2026-04-20T11:35:05Z'
+  split: dev
+  category: logic
+  totalAdditions: 211
+  totalDeletions: 11
+  findings:
+    - file: application/web/general/utils/WebUrlOpener.ts
+      line: 13
+      issue: >-
+        Removal of code that prevents showing 'open in desktop app' popup when a user started a session in the browser,
+        breaking expected UX behavior
+      severity: BLOCKING
+      commentId: 3072966722
+    - file: application/web/general/utils/tryOpenDesktopApp.ts
+      line: 90
+      issue: >-
+        rtbSessionStorage check is skipped, allowing the 'Open in app' popup to appear even when the user has explicitly
+        chosen to work in the browser
+      severity: BLOCKING
+      commentId: 3087584885
+    - file: application/web/lazy-modules/board/lazy-modules/board-ui/mode-system/modes/desktop/AppCategories.ts
+      line: 460
+      issue: >-
+        Feature flag hides toggle but existing logic in tryOpenDesktopApp.ts is left unchanged, creating inconsistent
+        behavior if rollback is needed
+      severity: SHOULD_FIX
+      commentId: 3073018801
+    - file: packages/open-in-desktop-app/src/storage.ts
+      line: 6
+      issue: >-
+        Custom localStorage handling reimplements existing functionality from @mirohq-internal/local-storage library,
+        causing maintenance duplication
+      severity: SHOULD_FIX
+      commentId: 3073045899
+- prNumber: 60749
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'AUTHZ-4011 feat: implement access checks for AI sticky notes functionality'
+  mergedAt: '2026-04-20T11:19:52Z'
+  split: holdout
+  category: logic
+  totalAdditions: 100
+  totalDeletions: 72
+  findings:
+    - file: >-
+        application/web/lazy-modules/board/lazy-modules/board-ui/plugins/stickers-recognition-app/isStickersRecognitionAppAvailable.ts
+      line: 12
+      issue: >-
+        Feature flag 'EA-163-ai-granular-controls' may be stale/always-on, and there is a potentially contradictory
+        isMiroAIAvailable check below that could enable functionality even when the granular check fails
+      severity: SHOULD_FIX
+      commentId: 3084567194
+- prNumber: 60597
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'A11Y-3947: Add option to place objects on top of other objects (e.g. dot voting)'
+  mergedAt: '2026-04-20T10:48:54Z'
+  split: holdout
+  category: logic
+  totalAdditions: 128
+  totalDeletions: 6
+  findings:
+    - file: >-
+        application/web/lazy-modules/board/lazy-modules/board-ui/plugins/semantic-positioning-command-palette/SemanticPositioningManager.ts
+      line: 213
+      issue: >-
+        moveOnTopOf does not handle container attachment (tryAttachTo), unlike other directional moves, meaning moved
+        items won't attach to frames/containers as expected
+      severity: SHOULD_FIX
+      commentId: 3100770205
+    - file: >-
+        application/web/lazy-modules/board/lazy-modules/board-ui/plugins/semantic-positioning-command-palette/translator/translations/translation.ja_JP.json
+      line: 17
+      issue: >-
+        Translation key changed only for Japanese locale, which may be unintentional and could introduce incorrect
+        localization
+      severity: SHOULD_FIX
+      commentId: 3100740629
+- prNumber: 60528
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'MDOCS-4159: When undo/redo involves creating a doc, THEN it does not restore subsequent states correctly.'
+  mergedAt: '2026-04-17T14:03:46Z'
+  split: holdout
+  category: logic
+  totalAdditions: 239
+  totalDeletions: 160
+  findings:
+    - file: packages/rich-text-editor/src/ink/core/history/History.ts
+      line: 56
+      issue: >-
+        Potential behavioral regression for data tables using enableHistory=false due to unintended change in History
+        initialization
+      severity: SHOULD_FIX
+      commentId: 3058746035
+    - file: packages/rich-text-editor/src/ink/core/history/History.ts
+      line: 56
+      issue: Multi-RTE widgets need history disabled but the change may break that requirement
+      severity: SHOULD_FIX
+      commentId: 3064736912
+- prNumber: 60862
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: AWF-6337 Add entry point for Refresh Insights per row
+  mergedAt: '2026-04-17T13:36:53Z'
+  split: dev
+  category: logic
+  totalAdditions: 168
+  totalDeletions: 147
+  findings:
+    - file: ''
+      line: null
+      issue: Cell results not calculated during skeleton construction, potentially breaking culling and LOD functionality
+      severity: SHOULD_FIX
+      commentId: 4120000351
+- prNumber: 60816
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'AFX-3000: Decouple AI Providers tab from AI Workflows add-on entitlement'
+  mergedAt: '2026-04-17T12:50:53Z'
+  split: dev
+  category: logic
+  totalAdditions: 239
+  totalDeletions: 16
+  findings:
+    - file: packages/settings-app/src/features/ai-settings/components/ai-models/AIModelsContent.tsx
+      line: 156
+      issue: >-
+        hasFlowsEntitlement is calculated both inside and outside the component leading to duplicated logic and
+        potential inconsistency
+      severity: SHOULD_FIX
+      commentId: 3100247329
+    - file: packages/settings-app/src/features/ai-settings/pages/page-ai-capabilities/hooks/useAICapabilitiesTabs.ts
+      line: 40
+      issue: >-
+        `canViewAIModelTab` does not fully encapsulate the tab visibility logic, leaving part of the condition outside
+        the function and making it unreliable as a single source of truth
+      severity: SHOULD_FIX
+      commentId: 3093096528
+    - file: packages/settings-app/src/features/ai-settings/pages/page-ai-capabilities/hooks/useAICapabilitiesTabs.ts
+      line: 40
+      issue: >-
+        `canViewAIModelsContentCheck` does not match the actual rendering condition for the tab, so callers relying on
+        it get incorrect visibility information
+      severity: SHOULD_FIX
+      commentId: 3093287412
+    - file: packages/settings-app/src/features/ai-settings/pages/page-ai-capabilities/hooks/useAICapabilitiesTabs.ts
+      line: 40
+      issue: >-
+        canViewAIModelsContentCheck used in multiple places with inconsistent visibility logic since hasFlowsEntitlement
+        is not available in all contexts
+      severity: SHOULD_FIX
+      commentId: 3093364636
+- prNumber: 54237
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'BEX-2033: Extract ''checkAllowedBoardGuestEditorEmails'' from AccountWrapper to standalone controller'
+  mergedAt: '2026-04-17T11:56:14Z'
+  split: holdout
+  category: logic
+  totalAdditions: 246
+  totalDeletions: 184
+  findings:
+    - file: >-
+        server/apis/API/src/main/java/projects/pt/server/api/servlets/accounts/boardguesteditors/BoardGuestEditorEmailsPublicApi.java
+      line: 41
+      issue: >-
+        Adding @Consumes(MediaType.APPLICATION_JSON) changes API contract to reject requests without Content-Type:
+        application/json header, breaking previously accepted behavior
+      severity: SHOULD_FIX
+      commentId: 3073819251
+- prNumber: 60923
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: PROTO-2182 Add measurement layer to shadow-dom-context
+  mergedAt: '2026-04-17T10:37:10Z'
+  split: dev
+  category: logic
+  totalAdditions: 380
+  totalDeletions: 2
+  findings:
+    - file: packages/widget-html/src/shadow-dom-context/measure.test.ts
+      line: 25
+      issue: >-
+        Re-injecting HTML into the same context may invalidate a previously returned DomIndex, causing stale references
+        when passed to measure()
+      severity: SHOULD_FIX
+      commentId: 3098190845
+    - file: packages/widget-html/src/shadow-dom-context/measuredStyleProperties.ts
+      line: 8
+      issue: >-
+        Missing `-webkit-line-clamp` in measuredStyleProperties list causes parseTextOverflow to not receive required
+        CSS property
+      severity: SHOULD_FIX
+      commentId: 3098082715
+- prNumber: 61118
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'LA-6597: [FE] Template strip does not refresh when templates marked a…'
+  mergedAt: '2026-04-21T09:02:39Z'
+  split: holdout
+  category: performance
+  totalAdditions: 18
+  totalDeletions: 1
+  findings:
+    - file: packages/api/src/domains/templates/hooks/official-templates/useCuratedTemplatesQuery.ts
+      line: 30
+      issue: >-
+        invalidateQueries on mark-as-official may trigger multiple redundant refetches of dashboard strip queries on
+        every user click
+      severity: SHOULD_FIX
+      commentId: 3100997172
+    - file: packages/api/src/domains/templates/hooks/official-templates/useCuratedTemplatesQuery.ts
+      line: 30
+      issue: >-
+        Each mark-as-official click triggers 2-3 extra backend requests due to multiple active subscribers to the
+        invalidated query
+      severity: SHOULD_FIX
+      commentId: 3101094903
+- prNumber: 54376
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: AUTHZ-4176 - Removed methods with data not related to authorization to not use txOutbox pattern for authorization
+  mergedAt: '2026-04-17T08:11:30Z'
+  split: dev
+  category: performance
+  totalAdditions: 5
+  totalDeletions: 5
+  findings:
+    - file: >-
+        server/general/Projects/src/integration-test/java/projects/pt/server/projects/services/repository/projects/DefaultProjectsRepositoryIT.java
+      line: 1163
+      issue: Test name updateTitle_shouldSendAuthzUpsert is misleading as the test now expects no authz outbox interaction
+      severity: SHOULD_FIX
+      commentId: 3094013001
+    - file: >-
+        server/general/Projects/src/integration-test/java/projects/pt/server/projects/services/repository/projects/DefaultProjectsRepositoryIT.java
+      line: 1369
+      issue: >-
+        Test name updateAccountId_shouldNotSendAuthzUpsert contradicts the test assertions and implementation which
+        still verify and send authz upserts
+      severity: SHOULD_FIX
+      commentId: 3094013043
+    - file: >-
+        server/general/Projects/src/main/java/projects/pt/server/projects/services/repository/projects/DefaultProjectsWriteRepository.java
+      line: 46
+      issue: >-
+        updateTitle uses returning(...).fetch() fetching full rows unnecessarily when returned records are no longer
+        used after removing tx outbox propagation
+      severity: SHOULD_FIX
+      commentId: 3094012936
+    - file: >-
+        server/general/board-impl/src/main/java/projects/pt/server/board/repositories/boards/impl/DefaultBoardsWriteRepository.java
+      line: 118
+      issue: >-
+        setEditedAtAndEditorId uses returning(...).fetch() fetching full rows unnecessarily when returned records are no
+        longer used; should use execute() instead
+      severity: SHOULD_FIX
+      commentId: 3094012877
+- prNumber: 53450
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: USRM-3173 Optimize fetching of AccountsNumber and OrganizationUserAttributes for members API
+  mergedAt: '2026-04-13T11:00:26Z'
+  split: dev
+  category: performance
+  totalAdditions: 551
+  totalDeletions: 17
+  findings:
+    - file: >-
+        server/general/users-impl/src/main/java/projects/pt/server/users/repository/accounts/users/AccountsUsersRepositoryImpl.java
+      line: 647
+      issue: Large userIds list could cause query performance issues or exceed database parameter limits without batching
+      severity: SHOULD_FIX
+      commentId: 2959547824
+- prNumber: 60034
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'WRKS-6799 Scales activity: show number of respondents instead of total answers'
+  mergedAt: '2026-04-07T10:23:29Z'
+  split: dev
+  category: performance
+  totalAdditions: 45
+  totalDeletions: 3
+  findings:
+    - file: packages/widget-dynamic-poll/src/widget/hooks/useUniqueRespondents.ts
+      line: 24
+      issue: >-
+        useUniqueRespondents recomputes on every state change even when votes hasn't changed, causing unnecessary
+        recomputation
+      severity: SHOULD_FIX
+      commentId: 3009441672
+- prNumber: 60158
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: ACQSHARE-4012 Hide toolbar during SVG export
+  mergedAt: '2026-04-01T14:32:16Z'
+  split: holdout
+  category: performance
+  totalAdditions: 51
+  totalDeletions: 10
+  findings:
+    - file: packages/data-tables/src/widget/components/MenuBar/MenuBarView.tsx
+      line: 1
+      issue: >-
+        Early return placed in MenuBarView instead of MenuBar, causing unnecessary LOD skeleton computation even when
+        nothing will be rendered
+      severity: SHOULD_FIX
+      commentId: 3021166478
+- prNumber: 53760
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CM-7605 Lock the view when tableType is Backlog or roadmap
+  mergedAt: '2026-03-27T13:36:19Z'
+  split: dev
+  category: performance
+  totalAdditions: 108
+  totalDeletions: 0
+  findings:
+    - file: >-
+        server/apis/grpc-business-logic-api/src/main/kotlin/com/miro/grpc/coredomain/board/lifecycle/FocusWidgetFactory.kt
+      line: 111
+      issue: >-
+        Possible duplicate board retrieval — board may be fetched twice if logic is placed outside
+        setBoardStartViewWidget
+      severity: SHOULD_FIX
+      commentId: 3001051486
+- prNumber: 53652
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CBE-1897 add comparison flow when applyJson is called with none empty json
+  mergedAt: '2026-03-26T10:10:19Z'
+  split: dev
+  category: performance
+  totalAdditions: 559
+  totalDeletions: 15
+  findings:
+    - file: >-
+        server/canva/Canvas/src/main/java/projects/pt/server/canvas/models/universalcontroller/services/UniversalControllerJsonProcessor.java
+      line: 113
+      issue: >-
+        High volume of log entries could overload Coralogix — logging strategy needs review to avoid excessive log
+        volume
+      severity: SHOULD_FIX
+      commentId: 2985944940
+    - file: >-
+        server/canva/Canvas/src/main/java/projects/pt/server/canvas/models/universalcontroller/services/UniversalControllerJsonProcessor.java
+      line: 159
+      issue: Missing metric/alert when widget doesn't exist but an update is attempted, which will cause a transaction error
+      severity: SHOULD_FIX
+      commentId: 2978946341
+    - file: >-
+        server/canva/Canvas/src/main/java/projects/pt/server/canvas/models/universalcontroller/services/UniversalControllerJsonProcessor.java
+      line: 169
+      issue: Same silent override/data loss issue as comment 2978949547 — missing observability for edge case
+      severity: SHOULD_FIX
+      commentId: 2978950247
+    - file: >-
+        server/canva/Canvas/src/main/java/projects/pt/server/canvas/models/universalcontroller/services/UniversalControllerJsonProcessor.java
+      line: 192
+      issue: >-
+        Checking all existing properties is inefficient; only the known widget namespace (via WIDGET_TYPE_TO_NAMESPACE)
+        needs to be checked
+      severity: SHOULD_FIX
+      commentId: 2978970410
+    - file: >-
+        server/canva/Canvas/src/test/java/projects/pt/server/canvas/models/universalcontroller/services/UniversalControllerJsonProcessorTest.java
+      line: 125
+      issue: 'Missing test coverage for namespace handling edge cases (ns: prefix vs no prefix at different levels)'
+      severity: SHOULD_FIX
+      commentId: 2978979891
+- prNumber: 53732
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'CBE-1760: Add CallerRunsPolicy to Executor'
+  mergedAt: '2026-03-26T09:46:13Z'
+  split: dev
+  category: performance
+  totalAdditions: 1
+  totalDeletions: 0
+  findings:
+    - file: server/canva/canvas-dumper/src/main/java/com/miro/dumpers/canva/canvas/common/MigrationFlowCommands.kt
+      line: 127
+      issue: >-
+        CallerRunsPolicy causes tasks to execute on the caller/dumper thread when queue is full, which may block
+        critical threads; SynchronousQueue or queue sizing may be more appropriate
+      severity: SHOULD_FIX
+      commentId: 2989022775
+- prNumber: 53140
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: MEETPLT-2637 Add Talktrack participants as comment subscribers
+  mergedAt: '2026-03-26T09:33:31Z'
+  split: dev
+  category: performance
+  totalAdditions: 385
+  totalDeletions: 4
+  findings:
+    - file: server/general/board-impl/src/main/java/projects/pt/server/board/services/comments/impl/CommentsServiceImpl.java
+      line: 413
+      issue: >-
+        Remote gRPC call inside a DB transaction increases lock hold time and risk of timeouts; should be fetched
+        outside the transaction
+      severity: SHOULD_FIX
+      commentId: 2931042290
+    - file: server/general/board-impl/src/main/java/projects/pt/server/board/services/comments/impl/CommentsServiceImpl.java
+      line: 423
+      issue: >-
+        Unhandled exception from gRPC call inside comment creation will fail the entire operation; recording participant
+        enrichment should be fault-tolerant
+      severity: SHOULD_FIX
+      commentId: 2931042318
+    - file: server/general/board-impl/src/main/java/projects/pt/server/board/services/comments/impl/CommentsServiceImpl.java
+      line: 423
+      issue: >-
+        No deduplication when merging recording participants with autoSubscribers may cause duplicate user IDs passed to
+        createOrUpdate
+      severity: SHOULD_FIX
+      commentId: 2931042331
+- prNumber: 59483
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'PROTO-2008: Show correct license badge in dashboard create menu'
+  mergedAt: '2026-03-24T13:36:27Z'
+  split: dev
+  category: performance
+  totalAdditions: 27
+  totalDeletions: 2
+  findings:
+    - file: packages/api/src/domains/spaces-sidebar/team/DangerousAllTeamsQuery.ts
+      line: 39
+      issue: >-
+        Query loads fields from all teams a user belongs to instead of only the currently needed team, causing
+        unnecessary data fetching
+      severity: SHOULD_FIX
+      commentId: 2980604250
+- prNumber: 59517
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'DTAB-3099: Key combination to open side panel'
+  mergedAt: '2026-03-20T10:11:19Z'
+  split: holdout
+  category: performance
+  totalAdditions: 63
+  totalDeletions: 16
+  findings:
+    - file: packages/data-tables/src/widget/components/Record/TableRecord.tsx
+      line: 433
+      issue: Potential re-rendering of all records on every active cell change due to activeCell being passed as a prop
+      severity: SHOULD_FIX
+      commentId: 2960254537
+- prNumber: 59196
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-6732 Fix O(N²) Map copying in applyIncomingChanges for large nested objects
+  mergedAt: '2026-03-19T08:51:11Z'
+  split: dev
+  category: performance
+  totalAdditions: 296
+  totalDeletions: 40
+  findings:
+    - file: packages/surface-service/src/components/SurfaceSyncedStateComponentImpl.ts
+      line: 141
+      issue: >-
+        Root-level JSON patch replacements notify all sub-paths as changed even when only one property changed, causing
+        unnecessary re-renders/updates
+      severity: SHOULD_FIX
+      commentId: 2952245912
+    - file: packages/surface-service/src/components/SurfaceSyncedStateComponentImpl.ts
+      line: 141
+      issue: Incremental updates fire subtree-level notifications causing unnecessary re-renders for single property changes
+      severity: SHOULD_FIX
+      commentId: 2952345957
+    - file: packages/surface-service/src/components/SurfaceSyncedStateComponentImpl.ts
+      line: 141
+      issue: >-
+        Batched update optimization should only apply on initial load, not on incremental updates; current
+        implementation applies new code path for all updates
+      severity: SHOULD_FIX
+      commentId: 2953784369
+- prNumber: 59086
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: O11Y-2611 Coralogix RUM SDK settings for conditional error sampling
+  mergedAt: '2026-03-17T10:17:10Z'
+  split: dev
+  category: performance
+  totalAdditions: 165
+  totalDeletions: 22
+  findings:
+    - file: ''
+      line: null
+      issue: Instrumentation changes may have performance impact that has not been benchmarked or profiled
+      severity: SHOULD_FIX
+      commentId: 3939704424
+    - file: packages/error-tracker/src/coralogix.ts
+      line: 116
+      issue: >-
+        Error buffer has no apparent size limit, which could cause unbounded memory growth in long sessions with many
+        errors
+      severity: SHOULD_FIX
+      commentId: 2940190510
+- prNumber: 57925
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: OLAF-2916 Improve multiple tabs ux for feature usage limit
+  mergedAt: '2026-03-10T12:42:55Z'
+  split: dev
+  category: performance
+  totalAdditions: 213
+  totalDeletions: 70
+  findings:
+    - file: packages/api/src/domains/user-trialable-feature-limit/hooks/useUserTrialableFeatureLimitQuery.ts
+      line: 35
+      issue: Queries always fire regardless of existing cache, potentially causing unnecessary network requests
+      severity: SHOULD_FIX
+      commentId: 2853952940
+    - file: packages/api/src/domains/user-trialable-feature-limit/hooks/useUserTrialableFeatureLimitQuery.ts
+      line: 46
+      issue: >-
+        await on invalidation waits for all related queries to reload, not just marking them stale, potentially causing
+        unintended blocking behavior
+      severity: SHOULD_FIX
+      commentId: 2910890839
+- prNumber: 58192
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'SE-3836: Filter templates by title in dropdown'
+  mergedAt: '2026-03-02T11:08:44Z'
+  split: dev
+  category: performance
+  totalAdditions: 140
+  totalDeletions: 29
+  findings:
+    - file: packages/omnibar/src/components/AISearchDropdown/AISearchDropdownResultsList.tsx
+      line: 55
+      issue: Removal of omnibarTr may degrade performance output; the impact of this change is not explained
+      severity: SHOULD_FIX
+      commentId: 2864164992
+    - file: packages/omnibar/src/components/AISearchDropdown/AISearchDropdownResultsList.tsx
+      line: 68
+      issue: >-
+        Empty state uses filteredTemplates while loading state uses templates — inconsistent state sources may cause
+        incorrect UI rendering
+      severity: SHOULD_FIX
+      commentId: 2864622521
+    - file: packages/omnibar/src/components/Omnibar.integration.test.tsx
+      line: 1
+      issue: ESLint is being disabled rather than fixing the underlying linting errors, masking potential code quality issues
+      severity: SHOULD_FIX
+      commentId: 2864160165
+- prNumber: 50064
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CM-7005 Enable Edit/Comment Team access options to the Space
+  mergedAt: '2025-11-28T09:58:44Z'
+  split: dev
+  category: performance
+  totalAdditions: 158
+  totalDeletions: 44
+  findings:
+    - file: server/authorization/authz-domain/src/main/kotlin/com/miro/authz/external/ProjectRoleResolver.kt
+      line: 34
+      issue: >-
+        Missing short-circuit optimization: team role check should occur before group role check and return early when
+        EDITOR, avoiding unnecessary group resolution for the majority of requests
+      severity: SHOULD_FIX
+      commentId: 2558964639
+- prNumber: 61088
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: Remove unused dependencies
+  mergedAt: '2026-04-21T10:03:20Z'
+  split: holdout
+  category: code-quality
+  totalAdditions: 18
+  totalDeletions: 117
+  findings:
+    - file: config/knip/knip.config.ts
+      line: 175
+      issue: Package name is outdated/renamed and needs to be updated in the knip config
+      severity: SHOULD_FIX
+      commentId: 3109833975
+    - file: config/knip/knip.config.ts
+      line: 183
+      issue: Another renamed package reference also needs updating in the knip config
+      severity: SHOULD_FIX
+      commentId: 3110287331
+- prNumber: 61148
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'CM-7723: Add blog post CRUD network interface'
+  mergedAt: '2026-04-21T08:40:45Z'
+  split: holdout
+  category: code-quality
+  totalAdditions: 440
+  totalDeletions: 0
+  findings:
+    - file: packages/spaces-overview/src/widgets/space-feed-widget/hooks/useCreateBlogPost.ts
+      line: 28
+      issue: >-
+        Mutation hook does not conform to the shared MutationHookParams/MutationHookResult interface, missing
+        isAllowed/isEvaluating fields that allow UI to disable/hide actions before calling the mutation
+      severity: SHOULD_FIX
+      commentId: 3110524578
+    - file: packages/spaces-overview/src/widgets/space-feed-widget/hooks/useCreateBlogPost.ts
+      line: 28
+      issue: >-
+        Other mutation hooks (useUpdateBlogPost, useDeleteBlogPost) also do not conform to the shared mutation hook
+        interface
+      severity: SHOULD_FIX
+      commentId: 3110526673
+- prNumber: 54405
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'USRM-3261: Implement user search AI tool for Miro I/O'
+  mergedAt: '2026-04-20T12:44:13Z'
+  split: dev
+  category: code-quality
+  totalAdditions: 214
+  totalDeletions: 1
+  findings:
+    - file: >-
+        server/users-list/users-list-grpc-api/src/main/kotlin/com/miro/grpc/userslist/aitool/GrpcUserSearchAiToolService.kt
+      line: 89
+      issue: >-
+        getBoardSuggestions returns a generic HTTP Response rather than transport-agnostic structure, acknowledged as
+        technical debt but deferred
+      severity: SHOULD_FIX
+      commentId: 3099779334
+- prNumber: 61100
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-7024 - Engage policies return MISSING_ADDON instead of LICENSE f…
+  mergedAt: '2026-04-20T11:53:57Z'
+  split: dev
+  category: code-quality
+  totalAdditions: 118
+  totalDeletions: 49
+  findings:
+    - file: packages/engage-shared/src/monetization/useEngageFeatures.access.test.ts
+      line: 196
+      issue: >-
+        setTooltip is mocked and cleared in tests but never actually asserted to be called correctly, leaving behavior
+        untested
+      severity: SHOULD_FIX
+      commentId: 3109626115
+    - file: packages/engage-shared/src/monetization/useEngageFeatures.access.test.ts
+      line: 196
+      issue: setTag is not tested across all code paths, leaving coverage gaps in the test suite
+      severity: SHOULD_FIX
+      commentId: 3109634788
+- prNumber: 54389
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CBE-1938 Remove DemoLayoutModel
+  mergedAt: '2026-04-19T09:27:42Z'
+  split: holdout
+  category: code-quality
+  totalAdditions: 9
+  totalDeletions: 355
+  findings:
+    - file: >-
+        server/canva/CommonsCanvas/src/main/java/projects/pt/server/commonscanvas/models/widgetextension/WidgetExtensionModel.kt
+      line: 60
+      issue: >-
+        Separate methods introduced per extension instead of a unified method iterating over extensions list, leading to
+        poor scalability and maintainability
+      severity: SHOULD_FIX
+      commentId: 3101154491
+- prNumber: 54225
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'BEX-2032: Extract ''checkWhoTakenSeats'' from AccountWrapper to standalone controller'
+  mergedAt: '2026-04-17T13:17:41Z'
+  split: dev
+  category: code-quality
+  totalAdditions: 277
+  totalDeletions: 76
+  findings:
+    - file: ''
+      line: null
+      issue: >-
+        Missing @Produces(MediaType.APPLICATION_JSON) on AccountCheckWhoTakenSeatsPublicApi may cause responses not to
+        be serialized as JSON correctly
+      severity: SHOULD_FIX
+      commentId: 4098313533
+    - file: >-
+        server/apis/API/src/main/java/projects/pt/server/api/servlets/accounts/seats/AccountCheckWhoTakenSeatsPublicApi.java
+      line: 1
+      issue: >-
+        Missing @Produces(MediaType.APPLICATION_JSON) annotation may cause responses to not be serialized as JSON
+        correctly
+      severity: SHOULD_FIX
+      commentId: 3072646613
+- prNumber: 61008
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: MDOCS-3982 code widget md export
+  mergedAt: '2026-04-17T13:04:38Z'
+  split: holdout
+  category: code-quality
+  totalAdditions: 145
+  totalDeletions: 9
+  findings:
+    - file: application/web/lazy-modules/board/lazy-modules/export/exporters/ExporterMarkdown.ts
+      line: 34
+      issue: >-
+        Code for rendering code widgets as markdown is not modularized into a shared package, preventing reuse for
+        embedded code widgets in docs
+      severity: SHOULD_FIX
+      commentId: 3093859452
+- prNumber: 54398
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: BEX-2046 - spring framework 6.2.18
+  mergedAt: '2026-04-17T11:44:56Z'
+  split: holdout
+  category: code-quality
+  totalAdditions: 14
+  totalDeletions: 14
+  findings:
+    - file: >-
+        devplatform/core/services/public-api/src/main/kotlin/com/miro/devplatform/core/publicapi/spring/sevlet/ResettableStreamHttpServletRequest.kt
+      line: 16
+      issue: Deprecated constructor used that is removed in version 7.0; should be replaced with the 0-arg equivalent
+      severity: SHOULD_FIX
+      commentId: 3099341354
+- prNumber: 60955
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: Bump swc + improve swc config for tests
+  mergedAt: '2026-04-17T09:56:58Z'
+  split: dev
+  category: code-quality
+  totalAdditions: 249
+  totalDeletions: 220
+  findings:
+    - file: application/web/lazy-modules/board-info-operations/boardsLogic/showModalBoardCannotBeCreated.test.ts
+      line: 1
+      issue: Test is failing locally on master, indicating a broken or flaky test that may not be reliable on CI either
+      severity: SHOULD_FIX
+      commentId: 3092040040
+- prNumber: 54355
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CBE-1976 Remove NamespaceTransformerServiceImpl
+  mergedAt: '2026-04-17T07:20:27Z'
+  split: dev
+  category: code-quality
+  totalAdditions: 9
+  totalDeletions: 250
+  findings:
+    - file: >-
+        server/canva/CustomFields/src/main/java/projects/pt/server/customfields/services/namespaces/impl/NamespaceTransformerServiceImpl.java
+      line: 23
+      issue: Metrics collection will stop being collected after this change, causing observability gaps
+      severity: SHOULD_FIX
+      commentId: 3093923391
+- prNumber: 61049
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'WRKS-7006: Join code widget trial banner improvements'
+  mergedAt: '2026-04-16T17:00:41Z'
+  split: holdout
+  category: code-quality
+  totalAdditions: 61
+  totalDeletions: 58
+  findings:
+    - file: packages/engage-shared/src/trial/TrialBanner.tsx
+      line: 144
+      issue: Incorrect prop name 'leftPadding' used on TextOptions; should be 'left'
+      severity: SHOULD_FIX
+      commentId: 3094572193
+- prNumber: 60841
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'CLC-4257: Scaffold AICreditsWidget — title, expand trigger, drawer shell'
+  mergedAt: '2026-04-16T15:05:08Z'
+  split: dev
+  category: code-quality
+  totalAdditions: 329
+  totalDeletions: 10
+  findings:
+    - file: packages/admin-insights/src/features/admin-analytics/widgets/ai-credits-widget/AICreditsWidget.testIds.ts
+      line: 6
+      issue: testIds 'elements' values incorrectly use strings instead of required empty objects {}
+      severity: SHOULD_FIX
+      commentId: 3093480513
+- prNumber: 54502
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CM-7687 Assign emoji icon on board creation via GrpcBoardLifecycleService
+  mergedAt: '2026-04-22T08:13:03Z'
+  split: dev
+  category: clean
+  totalAdditions: 109
+  totalDeletions: 39
+  findings: []
+- prNumber: 54448
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: LA-6328 Introduce permission to manage official templates
+  mergedAt: '2026-04-22T07:59:09Z'
+  split: holdout
+  category: clean
+  totalAdditions: 16
+  totalDeletions: 0
+  findings: []
+- prNumber: 54465
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: ACX-3942 Dedupe empty ai-companion config into application.yml
+  mergedAt: '2026-04-22T07:50:18Z'
+  split: dev
+  category: clean
+  totalAdditions: 5
+  totalDeletions: 13
+  findings: []
+- prNumber: 54514
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: USRM-3266 Add connectionType field to member teams endpoint
+  mergedAt: '2026-04-22T07:44:57Z'
+  split: dev
+  category: clean
+  totalAdditions: 30
+  totalDeletions: 8
+  findings: []
+- prNumber: 54509
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: DTAB-4370 create dummy read table tool
+  mergedAt: '2026-04-22T07:44:45Z'
+  split: holdout
+  category: clean
+  totalAdditions: 225
+  totalDeletions: 1
+  findings: []
+- prNumber: 54516
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: AUTHZ-000 Replace explicit iterators with for loops
+  mergedAt: '2026-04-22T07:38:51Z'
+  split: dev
+  category: clean
+  totalAdditions: 2
+  totalDeletions: 6
+  findings: []
+- prNumber: 54431
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: COIN-5100 Add integrations-data-plane to AuthZ caller allowlist
+  mergedAt: '2026-04-22T06:55:12Z'
+  split: dev
+  category: clean
+  totalAdditions: 1
+  totalDeletions: 0
+  findings: []
+- prNumber: 54532
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: CECS-2715 - Temporarily disable processResourceIndexRecords step
+  mergedAt: '2026-04-21T23:26:01Z'
+  split: dev
+  category: clean
+  totalAdditions: 6
+  totalDeletions: 47
+  findings: []
+- prNumber: 61324
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-7018 Show paywalled export button
+  mergedAt: '2026-04-21T19:39:00Z'
+  split: dev
+  category: clean
+  totalAdditions: 6
+  totalDeletions: 7
+  findings: []
+- prNumber: 61328
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'CADE-1716 fix (app settings): escape server error messages in app creation dialog'
+  mergedAt: '2026-04-21T19:34:31Z'
+  split: holdout
+  category: clean
+  totalAdditions: 7
+  totalDeletions: 8
+  findings: []
+- prNumber: 61283
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-7054 Cover Miro Engage BETA in E2E test
+  mergedAt: '2026-04-21T18:34:46Z'
+  split: dev
+  category: clean
+  totalAdditions: 144
+  totalDeletions: 5
+  findings: []
+- prNumber: 61309
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-7030 Fixed multi choice tests
+  mergedAt: '2026-04-21T17:34:43Z'
+  split: holdout
+  category: clean
+  totalAdditions: 126
+  totalDeletions: 21
+  findings: []
+- prNumber: 61311
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-7036 Fixed sticky note API e2e tests
+  mergedAt: '2026-04-21T17:34:43Z'
+  split: dev
+  category: clean
+  totalAdditions: 22
+  totalDeletions: 15
+  findings: []
+- prNumber: 54504
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: 'DTAB-4410: X_STRATPACK tables are filtering the output record fields …'
+  mergedAt: '2026-04-21T17:11:12Z'
+  split: dev
+  category: clean
+  totalAdditions: 113
+  totalDeletions: 30
+  findings: []
+- prNumber: 54362
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: AUTHZ-4169 - Added changes to InconsistentObjectsReporter to support new data types and improve state of code
+  mergedAt: '2026-04-21T16:52:49Z'
+  split: dev
+  category: clean
+  totalAdditions: 76
+  totalDeletions: 92
+  findings: []
+- prNumber: 61214
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'ACQSHARE-4111: Disable editable mode for ai generated comment message'
+  mergedAt: '2026-04-21T16:51:48Z'
+  split: dev
+  category: clean
+  totalAdditions: 25
+  totalDeletions: 8
+  findings: []
+- prNumber: 61295
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'LA-6579: [FE] Template preview - empty space at the bottom'
+  mergedAt: '2026-04-21T16:16:25Z'
+  split: dev
+  category: clean
+  totalAdditions: 47
+  totalDeletions: 15
+  findings: []
+- prNumber: 61305
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'fix sentry issue #7430069503'
+  mergedAt: '2026-04-21T16:16:25Z'
+  split: dev
+  category: clean
+  totalAdditions: 3
+  totalDeletions: 3
+  findings: []
+- prNumber: 54522
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: USRM-0000 Add addUserToAllTeamsInOrganization dumper command
+  mergedAt: '2026-04-21T16:07:08Z'
+  split: dev
+  category: clean
+  totalAdditions: 60
+  totalDeletions: 0
+  findings: []
+- prNumber: 61209
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: WRKS-6893 Don't render hidden close button
+  mergedAt: '2026-04-21T16:07:07Z'
+  split: holdout
+  category: clean
+  totalAdditions: 22
+  totalDeletions: 5
+  findings: []
+- prNumber: 61260
+  repo: client
+  repoSlug: miroapp-dev/client
+  title: 'A11Y-3954: Implement generic error message (e.g. 500 error)'
+  mergedAt: '2026-04-21T16:07:07Z'
+  split: dev
+  category: clean
+  totalAdditions: 229
+  totalDeletions: 2
+  findings: []
+- prNumber: 54515
+  repo: server
+  repoSlug: miroapp-dev/server
+  title: BEX-000 - refactor PreEventsTableConfigurationProperties
+  mergedAt: '2026-04-21T16:03:04Z'
+  split: dev
+  category: clean
+  totalAdditions: 31
+  totalDeletions: 49
+  findings: []
